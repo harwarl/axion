@@ -1,1 +1,1 @@
-pub async fn _new(){}
+pub async fn _new() {}

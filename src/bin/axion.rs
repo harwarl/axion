@@ -43,6 +43,16 @@ fn main() {
                         .index(2),
                 ),
         )
+        .subcommand(
+            Command::new("init")
+                .about("Creates a new axion project in the specified directory")
+                .arg(
+                    Arg::new("directory")
+                        .help("Directory to scaffold in. Use . for current folder")
+                        .required(true)
+                        .index(1),
+                )
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -55,6 +65,11 @@ fn main() {
                     .bold()
             );
             // TODO: handle the new command
+        }
+        Some(("init", sub_matches)) => {
+            let directory = sub_matches.get_one::<String>("directory").unwrap();
+            println!("{}", format!("Creating Axion Project in {}", directory).green().bold());
+            // TODO: handle the init command
         }
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();
