@@ -1,10 +1,11 @@
 use clap::{Arg, Command};
-use colored::Colorize;
 use std::process::exit;
+use colored::Colorize;
+use axion::command;
 
 macro_rules! die {
     ($fmt:expr) => ({
-        eprintln!($fmt);
+        eprintln!("{}", $fmt.red().bold());
         exit(1);
     });
     ($fmt:expr, $($arg:tt)*) => ({
@@ -23,7 +24,7 @@ fn main() {
             Command::new("new").about("Create a new axion").arg(
                 Arg::new("name")
                     .help("Name of the project")
-                    .required(true)
+                    .required(false)
                     .index(1),
             ),
         )
@@ -57,25 +58,17 @@ fn main() {
 
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
-            let name = sub_matches.get_one::<String>("name").unwrap();
-            println!(
-                "{}",
-                format!("Creating new Axion project: {}", name)
-                    .green()
-                    .bold()
-            );
-            // TODO: handle the new command
+            let name = sub_matches.get_one::<String>("name");
+            command::new(name);
         }
         Some(("init", sub_matches)) => {
             let directory = sub_matches.get_one::<String>("directory").unwrap();
-            println!("{}", format!("Creating Axion Project in {}", directory).green().bold());
-            // TODO: handle the init command
+            command::new(Some(directory))
         }
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();
             let name = sub_matches.get_one::<String>("name").unwrap();
-            println!("{}", format!("Adding {}: {}", kind, name).green().bold());
-            // TODO: handle the add command
+            command::add(name, kind)
         }
         _ => die!("error: missing required argument <COMMAND>"),
     };

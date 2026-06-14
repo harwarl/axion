@@ -1,6 +1,5 @@
-mod command;
-mod prompt;
-mod templates;
-mod types;
-mod generator;
-mod utils;
+pub mod command;
+pub mod prompt;
+pub mod templates;
+pub mod generator;
+pub mod utils;
