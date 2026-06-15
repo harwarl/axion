@@ -9,6 +9,7 @@ pub fn new(name: &String) {
             .cyan()
             .bold()
     );
+
     // Check if the folder already exists in the current directory
 
     // Create prompts for a new project

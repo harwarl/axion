@@ -63,6 +63,7 @@ fn main() {
         }
         Some(("init", sub_matches)) => {
             let directory = sub_matches.get_one::<String>("directory").unwrap();
+            // TODO: get the directory folder name
             command::new(directory)
         }
         Some(("add", sub_matches)) => {
