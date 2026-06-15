@@ -1,7 +1,7 @@
-use clap::{Arg, Command};
-use std::process::exit;
-use colored::Colorize;
 use axion::command;
+use clap::{Arg, Command};
+use colored::Colorize;
+use std::process::exit;
 
 macro_rules! die {
     ($fmt:expr) => ({
@@ -52,18 +52,18 @@ fn main() {
                         .help("Directory to scaffold in. Use . for current folder")
                         .required(true)
                         .index(1),
-                )
+                ),
         )
         .get_matches();
 
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
-            let name = sub_matches.get_one::<String>("name");
+            let name = sub_matches.get_one::<String>("name").unwrap();
             command::new(name);
         }
         Some(("init", sub_matches)) => {
             let directory = sub_matches.get_one::<String>("directory").unwrap();
-            command::new(Some(directory))
+            command::new(directory)
         }
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();

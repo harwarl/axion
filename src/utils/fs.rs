@@ -1,1 +1,1 @@
-pub async fn _check_dir(){}
+pub async fn _check_dir() {}
