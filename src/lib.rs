@@ -1,5 +1,4 @@
 pub mod command;
-pub mod commands;
 pub mod error;
 pub mod find;
 pub mod generator;

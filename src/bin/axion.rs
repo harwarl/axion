@@ -1,7 +1,8 @@
-use axion::commands;
+use axion::command;
 use clap::{Arg, Command};
 use colored::Colorize;
 use std::process::exit;
+use axion::error::{Result};
 
 macro_rules! die {
     ($fmt:expr) => ({
@@ -14,7 +15,7 @@ macro_rules! die {
     });
 }
 
-fn main() {
+fn main() -> Result<()>{
     let matches = Command::new("axion")
         .about("Create a onion architecture boilerplate for your rust projects")
         .override_usage("axion <COMMAND> [ARGS]")
@@ -59,18 +60,20 @@ fn main() {
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
             let name = sub_matches.get_one::<String>("name").unwrap();
-            commands::new(name);
+            command::new::new(name)?
         }
         Some(("init", sub_matches)) => {
             let directory = sub_matches.get_one::<String>("directory").unwrap();
             // TODO: get the directory folder name
-            commands::new(directory)
+            command::new::new(directory)?
         }
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();
             let name = sub_matches.get_one::<String>("name").unwrap();
-            commands::add(name, kind)
+            command::add::add(name, kind)?
         }
         _ => die!("error: missing required argument <COMMAND>"),
     };
+
+    Ok(())
 }
