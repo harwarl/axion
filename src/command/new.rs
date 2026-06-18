@@ -1,9 +1,10 @@
 use colored::Colorize;
 
 use crate::error::Result;
+use crate::scaffold::steps::BaseStep;
 use crate::{find::Finder, prompt::NewProject};
 
-pub fn new(name: &String) -> Result<()> {
+pub fn new(name: &String, directory: &String) -> Result<()> {
     println!(
         "{}",
         format!("Create a new Axum project, {}", name)
@@ -20,8 +21,9 @@ pub fn new(name: &String) -> Result<()> {
     };
 
     // Generate Prompts and get the New project Struct
-    let project = NewProject::from_prompt(name);
+    let project = NewProject::from_prompt(name, directory);
 
     // Create a scaffold based on the project struct
+    
     Ok(())
 }

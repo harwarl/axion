@@ -25,7 +25,8 @@ impl Finder {
 
         // Determine the file root
         cargo_file.parent().map(|p| p.to_path_buf()).ok_or_else(|| {
-            AxionError::Io(io::Error::new(
+            // TODO: update the empty string
+            AxionError::Io("".to_string(), io::Error::new(
                 io::ErrorKind::NotFound,
                 "Could not determine the project roots",
             ))
@@ -42,8 +43,9 @@ impl Finder {
                 }
             }
             Err(error) => {
+                // TODO: update the empty string
                 if error.kind() == io::ErrorKind::NotFound {
-                    return Err(AxionError::Io(error));
+                    return Err(AxionError::Io("".to_string(), error));
                 }
             }
         }
@@ -52,7 +54,8 @@ impl Finder {
             Self::find(parent, filename)
         } else {
             // throw an Error
-            return Err(AxionError::Io(io::Error::new(
+            // TODO: Update the axion Error
+            return Err(AxionError::Io("".to_string(), io::Error::new(
                 io::ErrorKind::NotFound,
                 "file not found",
             )));

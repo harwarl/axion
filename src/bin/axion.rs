@@ -1,4 +1,4 @@
-use axion::command;
+use axion::command::{new, add};
 use axion::error::Result;
 use clap::{Arg, Command};
 use colored::Colorize;
@@ -60,17 +60,21 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
             let name = sub_matches.get_one::<String>("name").unwrap();
-            command::new::new(name)?
+            // TODO: get the directory for the project name
+            let directory = String::new();
+            new::new(name, &directory)?
         }
         Some(("init", sub_matches)) => {
-            let directory = sub_matches.get_one::<String>("directory").unwrap();
+            let name = sub_matches.get_one::<String>("directory").unwrap();
             // TODO: get the directory folder name
-            command::new::new(directory)?
+            let directory = String::new();
+            // let name = 
+            new::new(name, &directory)?
         }
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();
             let name = sub_matches.get_one::<String>("name").unwrap();
-            command::add::add(name, kind)?
+            add::add(name, kind)?
         }
         _ => die!("error: missing required argument <COMMAND>"),
     };

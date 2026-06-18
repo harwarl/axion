@@ -11,7 +11,7 @@ impl Writer {
     }
 
     // Creates the file, if there isn't, and writes to it
-    pub fn create_file(path: &str, content: &str) -> Result<()> {
+    pub fn write_file(path: &str, content: &str) -> Result<()> {
         if let Some(parent) = Path::new(path).parent() {
             fs::create_dir_all(parent).map_err(|e| AxionError::Io(path.to_string(), e))?
         }

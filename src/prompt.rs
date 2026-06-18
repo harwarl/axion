@@ -2,7 +2,7 @@ use colored::Colorize;
 use inquire::Select;
 use strum::{Display, EnumIter, IntoEnumIterator};
 
-#[derive(Debug, EnumIter, Display, Clone)]
+#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Database {
     PostgreSQL,
     MySQL,
@@ -11,27 +11,28 @@ pub enum Database {
     None,
 }
 
-#[derive(Debug, EnumIter, Display, Clone)]
+#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum ORM {
     SQLx,
     Diesel,
     SeaORM,
+    None
 }
 
-#[derive(Debug, EnumIter, Display, Clone)]
+#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Auth {
     Jwt,
     Session,
     None,
 }
 
-#[derive(Debug, EnumIter, Display, Clone)]
+#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Cache {
     Redis,
     None,
 }
 
-#[derive(Debug, EnumIter, Display, Clone)]
+#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Containerize {
     Docker,
     None,
@@ -48,7 +49,7 @@ pub struct NewProject {
 }
 
 impl NewProject {
-    pub fn from_prompt(name: &String) -> Self {
+    pub fn from_prompt(name: &String, directory: &String) -> Self {
         let database = Select::new("Select a database: ", Database::iter().collect())
             .prompt()
             .unwrap();

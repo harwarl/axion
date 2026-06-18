@@ -15,7 +15,7 @@ pub enum AxionError {
     #[error("Kind '{0}' already exists in this project")]
     KindExists(String),
 
-    #[error("Unknown kind '{0}'. Try: route, handler, model, middleware")]
+    #[error("Unknown kind '{0}'. Try: handler, domain, infrastructure, service")]
     UnknownKind(String),
 
     #[error("Template error: {0}")]
