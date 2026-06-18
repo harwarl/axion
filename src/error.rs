@@ -37,7 +37,7 @@ impl AxionError {
 }
 
 fn matches_io_kind(err: &AxionError, kind: io::ErrorKind) -> bool {
-    if let AxionError::Io(ref io_error ) = *err {
+    if let AxionError::Io(ref io_error) = *err {
         return io_error.kind() == kind;
     }
     false

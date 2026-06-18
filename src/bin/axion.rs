@@ -1,8 +1,8 @@
 use axion::command;
+use axion::error::Result;
 use clap::{Arg, Command};
 use colored::Colorize;
 use std::process::exit;
-use axion::error::{Result};
 
 macro_rules! die {
     ($fmt:expr) => ({
@@ -15,7 +15,7 @@ macro_rules! die {
     });
 }
 
-fn main() -> Result<()>{
+fn main() -> Result<()> {
     let matches = Command::new("axion")
         .about("Create a onion architecture boilerplate for your rust projects")
         .override_usage("axion <COMMAND> [ARGS]")
