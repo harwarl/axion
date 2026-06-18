@@ -12,8 +12,14 @@ pub enum AxionError {
     #[error("IO error: {0}")]
     Io(#[source] io::Error),
 
-    // #[doc(hidden)]
-    // __Nonexhaustive,
+    #[error("Kind '{0}' already exists in this project")]
+    KindExists(String),
+
+    #[error("Unknown kind '{0}'. Try: route, handler, model, middleware")]
+    UnknownKind(String),
+
+    #[error("Template error: {0}")]
+    Template(String),
 }
 
 impl AxionError {
@@ -34,6 +40,5 @@ fn matches_io_kind(err: &AxionError, kind: io::ErrorKind) -> bool {
     if let AxionError::Io(ref io_error ) = *err {
         return io_error.kind() == kind;
     }
-
     false
 }
