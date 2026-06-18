@@ -1,6 +1,6 @@
 use colored::Colorize;
 
-use crate::prompt::NewProject;
+use crate::{find::Finder, prompt::NewProject};
 
 pub fn new(name: &String) {
     println!(
@@ -11,15 +11,24 @@ pub fn new(name: &String) {
     );
 
     // Check if the folder already exists in the current directory
+    if Finder::exists(name) {
+        eprintln!(
+            "{}",
+            format!("❌ Folder '{}' already exists", name).red().bold()
+        );
+        std::process::exit(1);
+    }
 
     // Create prompts for a new project
-    let _project = NewProject::from_prompt(name);
+    let project = NewProject::from_prompt(name);
 
+    // TODO: create a struct to keep track of what has been generated
     // generate files, pages, folders needed
 }
 
 pub fn add(name: &String, kind: &String) {
-    // check if the kind directoory is already available
+    // check if the kind directory is already available
+
     // throw error if yes
 
     // Create Prompts to add files based on what is needed

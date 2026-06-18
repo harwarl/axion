@@ -1,4 +1,4 @@
-use axion::command;
+use axion::commands;
 use clap::{Arg, Command};
 use colored::Colorize;
 use std::process::exit;
@@ -59,17 +59,17 @@ fn main() {
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
             let name = sub_matches.get_one::<String>("name").unwrap();
-            command::new(name);
+            commands::new(name);
         }
         Some(("init", sub_matches)) => {
             let directory = sub_matches.get_one::<String>("directory").unwrap();
             // TODO: get the directory folder name
-            command::new(directory)
+            commands::new(directory)
         }
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();
             let name = sub_matches.get_one::<String>("name").unwrap();
-            command::add(name, kind)
+            commands::add(name, kind)
         }
         _ => die!("error: missing required argument <COMMAND>"),
     };

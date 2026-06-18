@@ -28,4 +28,5 @@ indicatif = { version = "0.18.4" }
 tokio = "1.52.3"
 strum = { version = "0.28.0", features = ["derive"]}
 strum_macros = "0.28.0"
+thiserror = "2.0.18"
 

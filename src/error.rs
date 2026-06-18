@@ -1,36 +1,36 @@
 use std::{error, fmt, io};
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, AxumError>;
 
 #[derive(Debug)]
-pub enum Error {
+pub enum AxumError {
     Io(io::Error),
     #[doc(hidden)]
     __Nonexhaustive,
 }
 
-impl Error {
+impl AxumError {
     pub fn not_found(&self) -> bool {
-        if let Error::Io(ref io_error) = *self {
+        if let AxumError::Io(ref io_error) = *self {
             return io_error.kind() == io::ErrorKind::NotFound;
         }
         false
     }
 }
 
-impl error::Error for Error {
+impl error::Error for AxumError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
-            Error::Io(err) => Some(err),
+            AxumError::Io(err) => Some(err),
             _ => None,
         }
     }
 }
 
-impl fmt::Display for Error {
+impl fmt::Display for AxumError {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::Io(err) => write!(fmt, "{}", err),
+            AxumError::Io(err) => write!(fmt, "{}", err),
             _ => unreachable!(),
         }
     }

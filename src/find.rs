@@ -1,4 +1,4 @@
-use crate::error::{Error, Result};
+use crate::error::{AxumError, Result};
 use std::{
     fs, io,
     path::{Path, PathBuf},
@@ -25,7 +25,7 @@ impl Finder {
 
         // Determine the file root
         cargo_file.parent().map(|p| p.to_path_buf()).ok_or_else(|| {
-            Error::Io(io::Error::new(
+            AxumError::Io(io::Error::new(
                 io::ErrorKind::NotFound,
                 "Could not determine the project roots",
             ))
@@ -43,7 +43,7 @@ impl Finder {
             }
             Err(error) => {
                 if error.kind() == io::ErrorKind::NotFound {
-                    return Err(Error::Io(error));
+                    return Err(AxumError::Io(error));
                 }
             }
         }
@@ -52,7 +52,7 @@ impl Finder {
             Self::find(parent, filename)
         } else {
             // throw an Error
-            return Err(Error::Io(io::Error::new(
+            return Err(AxumError::Io(io::Error::new(
                 io::ErrorKind::NotFound,
                 "file not found",
             )));
