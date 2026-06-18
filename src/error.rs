@@ -9,8 +9,8 @@ pub enum AxionError {
     #[error("Project '{0}' already exists in this directory")]
     ProjectExists(String),
 
-    #[error("IO error: {0}")]
-    Io(#[source] io::Error),
+    #[error("IO error at {0}: {1}")]
+    Io(String, #[source] io::Error),
 
     #[error("Kind '{0}' already exists in this project")]
     KindExists(String),
@@ -26,7 +26,6 @@ impl AxionError {
     pub fn not_found(&self) -> bool {
         matches_io_kind(self, io::ErrorKind::NotFound)
     }
-
     pub fn permission_denid(&self) -> bool {
         matches_io_kind(self, io::ErrorKind::PermissionDenied)
     }
@@ -37,7 +36,7 @@ impl AxionError {
 }
 
 fn matches_io_kind(err: &AxionError, kind: io::ErrorKind) -> bool {
-    if let AxionError::Io(ref io_error) = *err {
+    if let AxionError::Io(_, ref io_error) = *err {
         return io_error.kind() == kind;
     }
     false
