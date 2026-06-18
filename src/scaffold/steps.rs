@@ -5,7 +5,7 @@ use crate::prompt::{Auth, Cache, Containerize, Database, NewProject};
 
 pub trait ScaffoldStep {
     fn label(&self) -> &str;
-    fn enabled(&self, new_project: &NewProject) -> bool {
+    fn enabled(&self, _new_project: &NewProject) -> bool {
         true
     }
     fn run(&self, new_project: &NewProject) -> Result<()>;
