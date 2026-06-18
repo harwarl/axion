@@ -1,4 +1,4 @@
-use axion::command::{new, add};
+use axion::command::{add, new};
 use axion::error::Result;
 use clap::{Arg, Command};
 use colored::Colorize;
@@ -68,7 +68,7 @@ fn main() -> Result<()> {
             let name = sub_matches.get_one::<String>("directory").unwrap();
             // TODO: get the directory folder name
             let directory = String::new();
-            // let name = 
+            // let name =
             new::new(name, &directory)?
         }
         Some(("add", sub_matches)) => {

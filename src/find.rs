@@ -26,10 +26,13 @@ impl Finder {
         // Determine the file root
         cargo_file.parent().map(|p| p.to_path_buf()).ok_or_else(|| {
             // TODO: update the empty string
-            AxionError::Io("".to_string(), io::Error::new(
-                io::ErrorKind::NotFound,
-                "Could not determine the project roots",
-            ))
+            AxionError::Io(
+                "".to_string(),
+                io::Error::new(
+                    io::ErrorKind::NotFound,
+                    "Could not determine the project roots",
+                ),
+            )
         })
     }
 
@@ -55,10 +58,10 @@ impl Finder {
         } else {
             // throw an Error
             // TODO: Update the axion Error
-            return Err(AxionError::Io("".to_string(), io::Error::new(
-                io::ErrorKind::NotFound,
-                "file not found",
-            )));
+            return Err(AxionError::Io(
+                "".to_string(),
+                io::Error::new(io::ErrorKind::NotFound, "file not found"),
+            ));
         }
     }
 }

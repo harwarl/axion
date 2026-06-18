@@ -5,19 +5,19 @@ use strum::{Display, EnumIter, IntoEnumIterator};
 #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Database {
     PostgreSQL,
-    MySQL,
-    SQLite,
-    MongoDB,
+    // MySQL,
+    // SQLite,
+    // MongoDB,
     None,
 }
 
-#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
-pub enum ORM {
-    SQLx,
-    Diesel,
-    SeaORM,
-    None
-}
+// #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
+// pub enum ORM {
+//     SQLx,
+//     Diesel,
+//     SeaORM,
+//     None,
+// }
 
 #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Auth {
@@ -42,7 +42,7 @@ pub struct NewProject {
     pub name: String,
     pub directory: String,
     pub database: Database,
-    pub orm: ORM,
+    // pub orm: ORM,
     pub auth: Auth,
     pub cache: Cache,
     pub containerize: Containerize,
@@ -54,9 +54,9 @@ impl NewProject {
             .prompt()
             .unwrap();
 
-        let orm = Select::new("Select an ORM: ", ORM::iter().collect())
-            .prompt()
-            .unwrap();
+        // let orm = Select::new("Select an ORM: ", ORM::iter().collect())
+        //     .prompt()
+        //     .unwrap();
 
         let auth = Select::new("Select auth: ", Auth::iter().collect())
             .prompt()
@@ -74,7 +74,7 @@ impl NewProject {
             name: name.clone(),
             directory: String::new(),
             database,
-            orm,
+            // orm,
             auth,
             cache,
             containerize,

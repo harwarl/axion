@@ -24,6 +24,6 @@ pub fn new(name: &String, directory: &String) -> Result<()> {
     let project = NewProject::from_prompt(name, directory);
 
     // Create a scaffold based on the project struct
-    
+
     Ok(())
 }

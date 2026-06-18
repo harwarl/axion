@@ -1,10 +1,13 @@
-use crate::prompt::{Auth, Cache, Containerize, Database, NewProject, ORM};
-use crate::error::Result;
 use super::writer::Writer;
+use crate::contants::{MAIN_FILES, NEW_PROJECT_DIR};
+use crate::error::Result;
+use crate::prompt::{Auth, Cache, Containerize, Database, NewProject};
 
 pub trait ScaffoldStep {
     fn label(&self) -> &str;
-    fn enabled(&self, new_project: &NewProject) -> bool { true }
+    fn enabled(&self, new_project: &NewProject) -> bool {
+        true
+    }
     fn run(&self, new_project: &NewProject) -> Result<()>;
 }
 
@@ -17,8 +20,9 @@ impl ScaffoldStep for BaseStep {
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
         Writer::create_dir(&new_project.name)?;
-        Writer::create_dir(&format!("{}/src", &new_project.name))?;
-        // TODO Create other folders needed
+        for dir in NEW_PROJECT_DIR {
+            Writer::create_dir(&format!("{}/{}", &new_project.name, dir))?;
+        }
         Ok(())
     }
 }
@@ -45,8 +49,11 @@ impl ScaffoldStep for MainStep {
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
-        // TODO: Add the main.fs template 
-        Writer::write_file(&format!("{}/main.rs", &new_project.name), "")?;
+        for file in MAIN_FILES {
+            Writer::write_file(&format!("{}/{}", &new_project.name, file), "")?;
+        }
+
+        // TODO Write to main.rs, create_app.rs, state.rs
         Ok(())
     }
 }
@@ -70,41 +77,59 @@ impl ScaffoldStep for ConfigStep {
 // Database Migration and connection pool
 pub struct DatabaseStep;
 impl ScaffoldStep for DatabaseStep {
-    fn label(&self) -> &str { "Setting up database layer" }
+    fn label(&self) -> &str {
+        "Setting up database layer"
+    }
     fn enabled(&self, new_project: &NewProject) -> bool {
         new_project.database != Database::None
     }
     fn run(&self, new_project: &NewProject) -> Result<()> {
         Writer::create_dir(&format!("{}/migrations", new_project.directory))?;
         // let content = Template::db_rs(new_project);
-        Writer::write_file(&format!("{}/src/db.rs", new_project.directory), "")?;
+        Writer::write_file(
+            &format!(
+                "{}/src/infrastructure/databases/db.rs",
+                new_project.directory
+            ),
+            "",
+        )?;
         Ok(())
     }
 }
 
-// ORM Models 
-pub struct OrmStep;
-impl ScaffoldStep for OrmStep {
-    fn label(&self) -> &str { "Setting up ORM layer" }
-    fn enabled(&self, project: &NewProject) -> bool {
-        project.orm != ORM::None
-    }
-    fn run(&self, new_project: &NewProject) -> Result<()> {
-        Writer::write_file(&format!("{}/src/models/mod.rs", new_project.directory), "")?;
-        Ok(())
-    }
-}
+// ORM Models
+// pub struct OrmStep;
+// impl ScaffoldStep for OrmStep {
+//     fn label(&self) -> &str {
+//         "Setting up ORM layer"
+//     }
 
+//     fn enabled(&self, project: &NewProject) -> bool {
+//         project.orm != ORM::None
+//     }
+
+//     fn run(&self, new_project: &NewProject) -> Result<()> {
+//         Writer::write_file(&format!("{}/src/models/mod.rs", new_project.directory), "")?;
+//         Ok(())
+//     }
+// }
 
 // AuthMiddleware and guards
 pub struct AuthStep;
 impl ScaffoldStep for AuthStep {
-    fn label(&self) -> &str { "Setting up auth layer" }
+    fn label(&self) -> &str {
+        "Setting up auth layer"
+    }
+
     fn enabled(&self, project: &NewProject) -> bool {
         project.auth != Auth::None
     }
+    
     fn run(&self, project: &NewProject) -> Result<()> {
-        Writer::write_file(&format!("{}/src/middleware/auth.rs", project.directory), "")?;
+        Writer::write_file(
+            &format!("{}/src/api/middleware/auth.rs", project.directory),
+            "",
+        )?;
         Ok(())
     }
 }
@@ -112,7 +137,9 @@ impl ScaffoldStep for AuthStep {
 // Cache
 pub struct CacheStep;
 impl ScaffoldStep for CacheStep {
-    fn label(&self) -> &str { "Setting up cache layer" }
+    fn label(&self) -> &str {
+        "Setting up cache layer"
+    }
     fn enabled(&self, project: &NewProject) -> bool {
         project.cache != Cache::None
     }
@@ -125,13 +152,15 @@ impl ScaffoldStep for CacheStep {
 // Docker
 pub struct DockerStep;
 impl ScaffoldStep for DockerStep {
-    fn label(&self) -> &str { "Setting up docker layer" }
+    fn label(&self) -> &str {
+        "Setting up docker layer"
+    }
     fn enabled(&self, project: &NewProject) -> bool {
         project.containerize != Containerize::None
     }
     fn run(&self, project: &NewProject) -> Result<()> {
         Writer::write_file(&format!("{}/Dockerfile", project.directory), "")?;
-        Writer::write_file(&format!("{}/compose.yam", project.directory), "")?;
+        Writer::write_file(&format!("{}/compose.yaml", project.directory), "")?;
         Ok(())
     }
 }
