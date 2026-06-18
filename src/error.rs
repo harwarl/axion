@@ -1,37 +1,39 @@
-use std::{error, fmt, io};
+use std::io;
 
-pub type Result<T> = std::result::Result<T, AxumError>;
+use thiserror::Error;
 
-#[derive(Debug)]
-pub enum AxumError {
-    Io(io::Error),
-    #[doc(hidden)]
-    __Nonexhaustive,
+pub type Result<T> = std::result::Result<T, AxionError>;
+
+#[derive(Debug, Error)]
+pub enum AxionError {
+    #[error("Project '{0}' already exists in this directory")]
+    ProjectExists(String),
+
+    #[error("IO error: {0}")]
+    Io(#[source] io::Error),
+
+    // #[doc(hidden)]
+    // __Nonexhaustive,
 }
 
-impl AxumError {
+impl AxionError {
     pub fn not_found(&self) -> bool {
-        if let AxumError::Io(ref io_error) = *self {
-            return io_error.kind() == io::ErrorKind::NotFound;
-        }
-        false
+        matches_io_kind(self, io::ErrorKind::NotFound)
+    }
+
+    pub fn permission_denid(&self) -> bool {
+        matches_io_kind(self, io::ErrorKind::PermissionDenied)
+    }
+
+    pub fn already_exists(&self) -> bool {
+        matches_io_kind(self, io::ErrorKind::AlreadyExists)
     }
 }
 
-impl error::Error for AxumError {
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match self {
-            AxumError::Io(err) => Some(err),
-            _ => None,
-        }
+fn matches_io_kind(err: &AxionError, kind: io::ErrorKind) -> bool {
+    if let AxionError::Io(ref io_error ) = *err {
+        return io_error.kind() == kind;
     }
-}
 
-impl fmt::Display for AxumError {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            AxumError::Io(err) => write!(fmt, "{}", err),
-            _ => unreachable!(),
-        }
-    }
+    false
 }
