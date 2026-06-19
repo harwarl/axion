@@ -14,6 +14,7 @@ impl Cargo {
         let status = Command::new("cargo")
             .args(["add"])
             .args(args)
+            .arg("--quiet")
             .current_dir(dir)
             .status()
             .map_err(|e| AxionError::Io("Cargo add".to_string(), e))?;
@@ -43,6 +44,7 @@ impl Cargo {
         let status = Command::new("cargo")
             .arg("init")
             .arg(name)
+            .arg("--quiet")
             .status()
             .map_err(|e| AxionError::Io("Cargo init".to_string(), e))?;
 

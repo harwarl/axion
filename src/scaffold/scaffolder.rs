@@ -1,9 +1,12 @@
+use std::time::Duration;
+
 use super::steps::{
     AuthStep, BaseStep, CacheStep, DependenciesStep, DockerStep, MainStep, ScaffoldStep,
 };
 use crate::error::Result;
 use crate::prompt::NewProject;
 use colored::Colorize;
+use indicatif::{ProgressBar, ProgressStyle};
 
 pub struct Scaffolder<'a> {
     project: &'a NewProject,
@@ -35,20 +38,22 @@ impl<'a> Scaffolder<'a> {
             .filter(|e| e.enabled(self.project))
             .collect();
 
-        let total = enabled.len();
+        for (_, step) in enabled.into_iter().enumerate() {
+            let pb = ProgressBar::new_spinner();
+            pb.set_style(ProgressStyle::with_template(
+                "{spinner:.cyan} {msg}"
+            ).unwrap().tick_chars("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"));
+            pb.enable_steady_tick(Duration::from_millis(80));
+            pb.set_message(step.label().to_string());
+            
+            let result =  step.run(self.project);
 
-        for (i, step) in enabled.into_iter().enumerate() {
-            // TODO: Add an indicator
-            eprintln!(
-                "  {} [{}/{}] {}",
-                "→".cyan(),
-                i + 1,
-                total,
-                step.label().dimmed()
-            );
+            match &result {
+                Ok(_) => pb.finish_with_message(format!("✅ {}", step.label())),
+                Err(e) => pb.finish_with_message(format!("❌ {} — {}", step.label(), e)),
+            }
 
-            // Run the step
-            step.run(self.project)?;
+            result?;
         }
 
         Ok(())
