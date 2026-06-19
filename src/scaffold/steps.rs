@@ -4,6 +4,7 @@ use crate::contants::{DEPENDENCIES, MAIN_FILES, NEW_PROJECT_DIR};
 use crate::error::Result;
 use crate::prompt::{Auth, Cache, Containerize, Database, NewProject};
 use crate::utils::cargo::Cargo;
+use crate::utils::docker::Docker;
 
 pub trait ScaffoldStep {
     fn label(&self) -> &str;
@@ -21,6 +22,7 @@ impl ScaffoldStep for BaseStep {
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
+        Cargo::init(&new_project.name)?;
         for dir in NEW_PROJECT_DIR {
             Writer::create_dir(&format!("{}/{}", &new_project.directory, dir))?;
         }
@@ -35,8 +37,10 @@ impl ScaffoldStep for DependenciesStep {
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
+        // Load mosut have dependencies
         let mut deps = Vec::from(DEPENDENCIES);
 
+        // Get more dependencies based on project requirements
         match new_project.database {
             Database::PostgreSQL => {
                 deps.push("sqlx --features postgres,macros,runtime-tokio-rustls")
@@ -163,8 +167,7 @@ impl ScaffoldStep for DockerStep {
         project.containerize != Containerize::None
     }
     fn run(&self, project: &NewProject) -> Result<()> {
-        Writer::write_file(&format!("{}/Dockerfile", project.directory), "")?;
-        Writer::write_file(&format!("{}/compose.yaml", project.directory), "")?;
+        Docker::initialize(&project.directory)?;
         Ok(())
     }
 }
