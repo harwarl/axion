@@ -40,13 +40,15 @@ impl<'a> Scaffolder<'a> {
 
         for (_, step) in enabled.into_iter().enumerate() {
             let pb = ProgressBar::new_spinner();
-            pb.set_style(ProgressStyle::with_template(
-                "{spinner:.cyan} {msg}"
-            ).unwrap().tick_chars("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"));
+            pb.set_style(
+                ProgressStyle::with_template("{spinner:.cyan} {msg}")
+                    .unwrap()
+                    .tick_chars("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"),
+            );
             pb.enable_steady_tick(Duration::from_millis(80));
             pb.set_message(step.label().to_string());
-            
-            let result =  step.run(self.project);
+
+            let result = step.run(self.project);
 
             match &result {
                 Ok(_) => pb.finish_with_message(format!("✅ {}", step.label())),

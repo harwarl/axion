@@ -13,7 +13,6 @@ impl Docker {
             .map_err(|e| AxionError::Io("docker init".to_string(), e))?;
 
         Self::status_check("docker init failed", status)
-        
     }
 
     fn status_check(msg: &str, status: ExitStatus) -> Result<()> {
