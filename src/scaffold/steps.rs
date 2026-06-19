@@ -19,9 +19,9 @@ impl ScaffoldStep for BaseStep {
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
-        Writer::create_dir(&new_project.name)?;
+        Writer::create_dir(&new_project.directory)?;
         for dir in NEW_PROJECT_DIR {
-            Writer::create_dir(&format!("{}/{}", &new_project.name, dir))?;
+            Writer::create_dir(&format!("{}/{}", &new_project.directory, dir))?;
         }
         Ok(())
     }
@@ -36,7 +36,7 @@ impl ScaffoldStep for CargoStep {
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
         // TODO: Add the cargo.toml template
-        Writer::write_file(&format!("{}/Cargo.toml", &new_project.name), "")?;
+        Writer::write_file(&format!("{}/Cargo.toml", &new_project.directory), "")?;
         Ok(())
     }
 }
@@ -50,7 +50,7 @@ impl ScaffoldStep for MainStep {
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
         for file in MAIN_FILES {
-            Writer::write_file(&format!("{}/{}", &new_project.name, file), "")?;
+            Writer::write_file(&format!("{}/{}", &new_project.directory, file), "")?;
         }
 
         // TODO Write to main.rs, create_app.rs, state.rs
@@ -67,9 +67,9 @@ impl ScaffoldStep for ConfigStep {
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
         // TODO: Add the config.rs and .env template
-        Writer::write_file(&format!("{}/config.rs", &new_project.name), "")?;
-        Writer::write_file(&format!("{}/.env", &new_project.name), "")?;
-        Writer::write_file(&format!("{}/.env.example", &new_project.name), "")?;
+        Writer::write_file(&format!("{}/config.rs", &new_project.directory), "")?;
+        Writer::write_file(&format!("{}/.env", &new_project.directory), "")?;
+        Writer::write_file(&format!("{}/.env.example", &new_project.directory), "")?;
         Ok(())
     }
 }
@@ -124,7 +124,7 @@ impl ScaffoldStep for AuthStep {
     fn enabled(&self, project: &NewProject) -> bool {
         project.auth != Auth::None
     }
-    
+
     fn run(&self, project: &NewProject) -> Result<()> {
         Writer::write_file(
             &format!("{}/src/api/middleware/auth.rs", project.directory),

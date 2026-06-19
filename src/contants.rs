@@ -48,5 +48,5 @@ pub const MAIN_FILES: &[&str] = &[
     // SERVICES DIRECTORIES
     "src/services/mod.rs",
     // TEST DIRECTORIES
-    "src/tests",
+    // "src/tests",
 ];

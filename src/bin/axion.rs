@@ -61,14 +61,19 @@ fn main() -> Result<()> {
         Some(("new", sub_matches)) => {
             let name = sub_matches.get_one::<String>("name").unwrap();
             // TODO: get the directory for the project name
-            let directory = String::new();
+            let directory = format!(
+                "{}/{}",
+                std::env::current_dir().unwrap().to_string_lossy(),
+                name
+            );
             new::new(name, &directory)?
         }
         Some(("init", sub_matches)) => {
             let name = sub_matches.get_one::<String>("directory").unwrap();
-            // TODO: get the directory folder name
-            let directory = String::new();
-            // let name =
+            let directory = std::env::current_dir()
+                .unwrap()
+                .to_string_lossy()
+                .to_string();
             new::new(name, &directory)?
         }
         Some(("add", sub_matches)) => {

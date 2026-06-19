@@ -4,5 +4,4 @@ pub mod error;
 pub mod find;
 pub mod prompt;
 pub mod scaffold;
-pub mod templates;
 pub mod utils;

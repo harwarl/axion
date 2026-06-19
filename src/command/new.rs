@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 use crate::error::Result;
-use crate::scaffold::steps::BaseStep;
+use crate::scaffold::scaffolder::Scaffolder;
 use crate::{find::Finder, prompt::NewProject};
 
 pub fn new(name: &String, directory: &String) -> Result<()> {
@@ -15,7 +15,7 @@ pub fn new(name: &String, directory: &String) -> Result<()> {
     if Finder::exists(name) {
         eprintln!(
             "{}",
-            format!("❌ Folder '{}' already exists", name).red().bold()
+            format!("❌ Project '{}' already exists", name).red().bold()
         );
         std::process::exit(1)
     };
@@ -24,6 +24,7 @@ pub fn new(name: &String, directory: &String) -> Result<()> {
     let project = NewProject::from_prompt(name, directory);
 
     // Create a scaffold based on the project struct
-
+    let scaffolder = Scaffolder::new(&project);
+    scaffolder.run()?;
     Ok(())
 }

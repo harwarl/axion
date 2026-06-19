@@ -66,13 +66,13 @@ impl NewProject {
             .prompt()
             .unwrap();
 
-        let containerize = Select::new("Containerize?", Containerize::iter().collect())
+        let containerize = Select::new("Containerize: ", Containerize::iter().collect())
             .prompt()
             .unwrap();
 
         Self {
             name: name.clone(),
-            directory: String::new(),
+            directory: directory.clone(),
             database,
             // orm,
             auth,
