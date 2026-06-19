@@ -48,7 +48,7 @@ impl ScaffoldStep for DependenciesStep {
             Auth::Jwt => {
                 deps.push("bcrypt");
                 deps.push("jsonwebtoken --features rust_crypto");
-            },
+            }
             Auth::None => {}
         }
 

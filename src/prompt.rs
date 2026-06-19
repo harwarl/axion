@@ -1,6 +1,8 @@
+use std::path::Path;
+
+use colored::Colorize;
 use inquire::Select;
 use strum::{Display, EnumIter, IntoEnumIterator};
-
 
 #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Database {
@@ -49,7 +51,22 @@ pub struct NewProject {
 }
 
 impl NewProject {
-    pub fn from_prompt(name: &String, directory: &String) -> Self {
+    pub fn from_prompt(name: &str, directory: &String) -> Self {
+        let project_name = match name {
+            "." => Path::new(directory)
+                .file_name()
+                .and_then(|f| f.to_str())
+                .unwrap_or("Project"),
+            _ => name,
+        };
+
+        println!(
+            "{}",
+            format!("🚀 Creating a new Axion project: {}", project_name)
+                .cyan()
+                .bold()
+        );
+
         let database = Select::new("Select a database: ", Database::iter().collect())
             .prompt()
             .unwrap();
@@ -71,7 +88,7 @@ impl NewProject {
             .unwrap();
 
         Self {
-            name: name.clone(),
+            name: name.to_string(),
             directory: directory.clone(),
             database,
             // orm,
@@ -107,5 +124,4 @@ impl NewProject {
         //     }
         // }
     }
-
 }

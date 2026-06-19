@@ -1,13 +1,16 @@
+use crate::{
+    error::{AxionError, Result},
+    find::Finder,
+};
 use std::path::Path;
-use crate::{error::{AxionError, Result}, find::Finder};
 use std::process::{Command, ExitStatus};
 
 pub struct Cargo;
 
 impl Cargo {
     pub fn add(dep: &str, dir: &str) -> Result<()> {
-        let args : Vec<&str> = dep.split_whitespace().collect();
-        
+        let args: Vec<&str> = dep.split_whitespace().collect();
+
         let status = Command::new("cargo")
             .args(["add"])
             .args(args)
@@ -30,11 +33,11 @@ impl Cargo {
 
     pub fn init(name: &str) -> Result<()> {
         // name can be an actual name or '.'
-        let dir = if name == "." { "."} else { name };
+        let dir = if name == "." { "." } else { name };
 
         // Check project already exists
         if Path::new(dir).join("Cargo.toml").exists() {
-            return Err(AxionError::ProjectExists(dir.to_string()))
+            return Err(AxionError::ProjectExists(dir.to_string()));
         }
 
         let status = Command::new("cargo")

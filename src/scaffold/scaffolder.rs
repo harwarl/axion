@@ -1,4 +1,6 @@
-use super::steps::{BaseStep, ScaffoldStep, AuthStep, CacheStep, DockerStep, MainStep, DependenciesStep};
+use super::steps::{
+    AuthStep, BaseStep, CacheStep, DependenciesStep, DockerStep, MainStep, ScaffoldStep,
+};
 use crate::error::Result;
 use crate::prompt::NewProject;
 use colored::Colorize;
