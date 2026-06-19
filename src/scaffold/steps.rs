@@ -1,7 +1,11 @@
+use std::io::ErrorKind;
+use std::process::Command;
+
+use super::template::Template;
 use super::writer::Writer;
 use crate::contants::{MAIN_FILES, NEW_PROJECT_DIR};
-use crate::error::Result;
-use crate::prompt::{Auth, Cache, Containerize, Database, NewProject};
+use crate::error::{AxionError, Result};
+use crate::prompt::{Auth, Cache, Containerize, Database, NewProject, ORM};
 
 pub trait ScaffoldStep {
     fn label(&self) -> &str;
@@ -19,7 +23,6 @@ impl ScaffoldStep for BaseStep {
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
-        Writer::create_dir(&new_project.directory)?;
         for dir in NEW_PROJECT_DIR {
             Writer::create_dir(&format!("{}/{}", &new_project.directory, dir))?;
         }
@@ -31,12 +34,13 @@ impl ScaffoldStep for BaseStep {
 pub struct CargoStep;
 impl ScaffoldStep for CargoStep {
     fn label(&self) -> &str {
-        "Generating Cargo.toml"
+        "Updating Cargo.toml"
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
-        // TODO: Add the cargo.toml template
-        Writer::write_file(&format!("{}/Cargo.toml", &new_project.directory), "")?;
+        let content = Template::cargo_toml(new_project)?;
+        // Overwrite the existing cargo.toml file
+        Writer::write_file(&format!("{}/Cargo.toml", &new_project.directory), &content)?;
         Ok(())
     }
 }

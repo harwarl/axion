@@ -11,18 +11,18 @@ pub enum Database {
     None,
 }
 
-// #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
-// pub enum ORM {
-//     SQLx,
-//     Diesel,
-//     SeaORM,
-//     None,
-// }
+#[derive(Debug, EnumIter, Display, Clone, PartialEq)]
+pub enum ORM {
+    SQLx,
+    // Diesel,
+    // SeaORM,
+    None,
+}
 
 #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Auth {
     Jwt,
-    Session,
+    // Session,
     None,
 }
 

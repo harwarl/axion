@@ -1,5 +1,4 @@
 pub const NEW_PROJECT_DIR: &[&str] = &[
-    "src",
     // API DIRECTORIES
     "src/api",
     "src/api/controllers",
@@ -22,7 +21,6 @@ pub const NEW_PROJECT_DIR: &[&str] = &[
 ];
 
 pub const MAIN_FILES: &[&str] = &[
-    "src/main.rs",
     "src/create_app.rs",
     "src/lib.rs",
     "src/state.rs",

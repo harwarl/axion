@@ -1,0 +1,23 @@
+[package] name = "{{project.name}}" version = "0.1.0" edition = "2024"
+[dependencies] dotenv = "0.15.0" async-trait = "0.1.89" serde_json = "1.0.150"
+futures-util = "0.3.32" tracing = "0.1.44" tower = "0.5.3" tracing-subscriber =
+{version = "0.3.23", features = ["tracing"]} tokio = { version = "1.52.3",
+features = ["full"]} axum = { version = "0.8.9", features = ["macros"]} serde =
+{ version = "1.0.228", features = ["derive"]}
+
+{{! Database }}
+{{#if database.postgresql}}
+  sqlx = { version = "0.8.6", features = ["postgres", "macros",
+  "runtime-tokio-rustls", "migrate", "uuid"]}
+{{/if}}
+
+{{! Auth }}
+{{#if auth.jwt}}
+  bcrypt = "0.18.0" jsonwebtoken = { version = "10.3.0", features =
+  ["rust_crypto"] }
+{{/if}}
+
+{{! Cache }}
+{{#if cache.redis}}
+  redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+{{/if}}
