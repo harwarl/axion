@@ -1,6 +1,6 @@
-use colored::Colorize;
 use inquire::Select;
 use strum::{Display, EnumIter, IntoEnumIterator};
+
 
 #[derive(Debug, EnumIter, Display, Clone, PartialEq)]
 pub enum Database {
@@ -107,4 +107,5 @@ impl NewProject {
         //     }
         // }
     }
+
 }

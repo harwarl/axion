@@ -21,6 +21,9 @@ pub const NEW_PROJECT_DIR: &[&str] = &[
 ];
 
 pub const MAIN_FILES: &[&str] = &[
+    "config.rs",
+    ".env",
+    ".env.example",
     "src/create_app.rs",
     "src/lib.rs",
     "src/state.rs",

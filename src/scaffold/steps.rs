@@ -28,20 +28,6 @@ impl ScaffoldStep for BaseStep {
     }
 }
 
-// Cargo.toml
-pub struct CargoStep;
-impl ScaffoldStep for CargoStep {
-    fn label(&self) -> &str {
-        "Updating Cargo.toml"
-    }
-
-    // Create a Cargo project
-    fn run(&self, new_project: &NewProject) -> Result<()> {
-        Cargo::init(&new_project.name)?;
-        Ok(())
-    }
-}
-
 pub struct DependenciesStep;
 impl ScaffoldStep for DependenciesStep {
     fn label(&self) -> &str {
@@ -79,31 +65,15 @@ impl ScaffoldStep for DependenciesStep {
 pub struct MainStep;
 impl ScaffoldStep for MainStep {
     fn label(&self) -> &str {
-        "Generating main.rs"
+        "Generating needed folders and files"
     }
 
+    // Create the files needed i.e create_app.rs, state.rs, lib.rs
     fn run(&self, new_project: &NewProject) -> Result<()> {
         for file in MAIN_FILES {
             Writer::write_file(&format!("{}/{}", &new_project.directory, file), "")?;
         }
 
-        // TODO Write to main.rs, create_app.rs, state.rs
-        Ok(())
-    }
-}
-
-// config.rs + .env
-pub struct ConfigStep;
-impl ScaffoldStep for ConfigStep {
-    fn label(&self) -> &str {
-        "Generating config and .env"
-    }
-
-    fn run(&self, new_project: &NewProject) -> Result<()> {
-        // TODO: Add the config.rs and .env template
-        Writer::write_file(&format!("{}/config.rs", &new_project.directory), "")?;
-        Writer::write_file(&format!("{}/.env", &new_project.directory), "")?;
-        Writer::write_file(&format!("{}/.env.example", &new_project.directory), "")?;
         Ok(())
     }
 }
