@@ -1,11 +1,9 @@
-use std::io::ErrorKind;
-use std::process::Command;
-
 use super::template::Template;
 use super::writer::Writer;
-use crate::contants::{MAIN_FILES, NEW_PROJECT_DIR};
-use crate::error::{AxionError, Result};
-use crate::prompt::{Auth, Cache, Containerize, Database, NewProject, ORM};
+use crate::contants::{DEPENDENCIES, MAIN_FILES, NEW_PROJECT_DIR};
+use crate::error::Result;
+use crate::prompt::{Auth, Cache, Containerize, Database, NewProject};
+use crate::utils::cargo::Cargo;
 
 pub trait ScaffoldStep {
     fn label(&self) -> &str;
@@ -19,7 +17,7 @@ pub trait ScaffoldStep {
 pub struct BaseStep;
 impl ScaffoldStep for BaseStep {
     fn label(&self) -> &str {
-        "Creating Project Structure"
+        "Creating Cargo Project ..."
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
@@ -37,10 +35,42 @@ impl ScaffoldStep for CargoStep {
         "Updating Cargo.toml"
     }
 
+    // Create a Cargo project
     fn run(&self, new_project: &NewProject) -> Result<()> {
-        let content = Template::cargo_toml(new_project)?;
-        // Overwrite the existing cargo.toml file
-        Writer::write_file(&format!("{}/Cargo.toml", &new_project.directory), &content)?;
+        Cargo::init(&new_project.name)?;
+        Ok(())
+    }
+}
+
+pub struct DependenciesStep;
+impl ScaffoldStep for DependenciesStep {
+    fn label(&self) -> &str {
+        "Installing dependencies"
+    }
+
+    fn run(&self, new_project: &NewProject) -> Result<()> {
+        let mut deps = Vec::from(DEPENDENCIES);
+
+        match new_project.database {
+            Database::PostgreSQL => {
+                deps.push("sqlx --features postgres,macros,runtime-tokio-rustls")
+            }
+            Database::None => {}
+        }
+
+        match new_project.auth {
+            Auth::Jwt => {
+                deps.push("bcrypt");
+                deps.push("jsonwebtoken --features rust_crypto");
+            },
+            Auth::None => {}
+        }
+
+        // add dependencies
+        for dep in deps {
+            Cargo::add(dep, &new_project.directory)?;
+        }
+
         Ok(())
     }
 }

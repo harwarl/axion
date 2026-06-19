@@ -81,30 +81,30 @@ impl NewProject {
         }
     }
 
-    pub fn add(name: &str, kind: &str) {
+    pub fn add(_name: &str, _kind: &str) {
         // TODO: to be Adjusted
-        match kind {
-            "entity" => {
-                println!("{}", format!("Adding entity: {}", name).cyan().bold());
-                // generator::entity::generate(name)
-            }
-            "use-case" => {
-                println!("{}", format!("Adding use case: {}", name).cyan().bold());
-                // generator::use_case::generate(name)
-            }
-            "repo" => {
-                println!("{}", format!("Adding repo: {}", name).cyan().bold());
-                // generator::repo::generate(name)
-            }
-            _ => {
-                eprintln!(
-                    "{}",
-                    format!("Unknown type: {}. Use entity | use-case | repo", kind)
-                        .red()
-                        .bold()
-                );
-                std::process::exit(1);
-            }
-        }
+        // match kind {
+        //     "entity" => {
+        //         println!("{}", format!("Adding entity: {}", name).cyan().bold());
+        //         // generator::entity::generate(name)
+        //     }
+        //     "use-case" => {
+        //         println!("{}", format!("Adding use case: {}", name).cyan().bold());
+        //         // generator::use_case::generate(name)
+        //     }
+        //     "repo" => {
+        //         println!("{}", format!("Adding repo: {}", name).cyan().bold());
+        //         // generator::repo::generate(name)
+        //     }
+        //     _ => {
+        //         eprintln!(
+        //             "{}",
+        //             format!("Unknown type: {}. Use entity | use-case | repo", kind)
+        //                 .red()
+        //                 .bold()
+        //         );
+        //         std::process::exit(1);
+        //     }
+        // }
     }
 }

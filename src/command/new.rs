@@ -1,8 +1,8 @@
 use colored::Colorize;
 
 use crate::error::Result;
+use crate::prompt::NewProject;
 use crate::scaffold::scaffolder::Scaffolder;
-use crate::{find::Finder, prompt::NewProject};
 
 pub fn new(name: &String, directory: &String) -> Result<()> {
     println!(
@@ -11,14 +11,6 @@ pub fn new(name: &String, directory: &String) -> Result<()> {
             .cyan()
             .italic()
     );
-
-    if Finder::exists(name) {
-        eprintln!(
-            "{}",
-            format!("❌ Project '{}' already exists", name).red().bold()
-        );
-        std::process::exit(1)
-    };
 
     // Generate Prompts and get the New project Struct
     let project = NewProject::from_prompt(name, directory);

@@ -1,5 +1,6 @@
 use axion::command::{add, new};
 use axion::error::Result;
+use axion::find::Finder;
 use clap::{Arg, Command};
 use colored::Colorize;
 use std::process::exit;
@@ -60,22 +61,37 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("new", sub_matches)) => {
             let name = sub_matches.get_one::<String>("name").unwrap();
-            // TODO: get the directory for the project name
             let directory = format!(
                 "{}/{}",
                 std::env::current_dir().unwrap().to_string_lossy(),
                 name
             );
+            if Finder::exists(name) {
+                eprintln!(
+                    "{}",
+                    format!(
+                        "❌ Project '{}' already exists run 'Axion init instead'",
+                        name
+                    )
+                    .red()
+                    .bold()
+                );
+                std::process::exit(1)
+            };
+
             new::new(name, &directory)?
         }
+
         Some(("init", sub_matches)) => {
             let name = sub_matches.get_one::<String>("directory").unwrap();
             let directory = std::env::current_dir()
                 .unwrap()
                 .to_string_lossy()
                 .to_string();
+
             new::new(name, &directory)?
         }
+
         Some(("add", sub_matches)) => {
             let kind = sub_matches.get_one::<String>("type").unwrap();
             let name = sub_matches.get_one::<String>("name").unwrap();

@@ -1,7 +1,7 @@
 use super::steps::{BaseStep, CargoStep, ScaffoldStep};
 use crate::error::Result;
 use crate::prompt::NewProject;
-use crate::scaffold::steps::{AuthStep, CacheStep, DockerStep, MainStep};
+use crate::scaffold::steps::{AuthStep, CacheStep, DockerStep, MainStep, DependenciesStep};
 use colored::Colorize;
 
 pub struct Scaffolder<'a> {
@@ -14,6 +14,7 @@ impl<'a> Scaffolder<'a> {
         let steps: Vec<Box<dyn ScaffoldStep>> = vec![
             Box::new(BaseStep),
             Box::new(CargoStep),
+            Box::new(DependenciesStep),
             Box::new(MainStep),
             Box::new(AuthStep),
             Box::new(CacheStep),
