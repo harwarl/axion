@@ -1,7 +1,4 @@
-use crate::{
-    error::{AxionError, Result},
-    find::Finder,
-};
+use crate::error::{AxionError, Result};
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 

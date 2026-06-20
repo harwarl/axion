@@ -5,7 +5,6 @@ use super::steps::{
 };
 use crate::error::Result;
 use crate::prompt::NewProject;
-use colored::Colorize;
 use indicatif::{ProgressBar, ProgressStyle};
 
 pub struct Scaffolder<'a> {

@@ -1,4 +1,3 @@
-use super::template::Template;
 use super::writer::Writer;
 use crate::contants::{DEPENDENCIES, MAIN_FILES, NEW_PROJECT_DIR};
 use crate::error::Result;
