@@ -4,13 +4,9 @@ use crate::{
     scaffold::writer::Writer,
 };
 use handlebars::Handlebars;
-use rust_embed::RustEmbed;
 use serde_json::{Value, json};
+use axo_template::TemplateAssets;
 
-// Embed the Assets
-#[derive(RustEmbed)]
-#[folder = "axo-template/template"]
-pub struct TemplateAssets;
 
 // Render the embedded assets
 pub struct TemplateRenderer;
