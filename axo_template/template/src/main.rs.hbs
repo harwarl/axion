@@ -1,0 +1,17 @@
+use std::sync::Arc;
+
+use {{project.name}}::{create_app::create_app, state::AppState};
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+    let app_state = Arc::new(AppState::new().await);
+    let router = create_app(app_state);
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:5656")
+        .await
+        .expect("failed to start up listener");
+    tracing::info!("🚀 Server listening on {}", listener.local_addr().unwrap());
+    axum::serve(listener, router)
+        .await
+        .expect("Failed to serve")
+}

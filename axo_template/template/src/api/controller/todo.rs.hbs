@@ -1,0 +1,52 @@
+use std::sync::Arc;
+
+use axum::{
+    Json,
+    extract::{Path, Query, State},
+    http::StatusCode,
+    response::IntoResponse,
+};
+
+use crate::{
+    api::dto::todo::{CreateTodoDTO, TodoDTO},
+    domain::{
+        error::ApiError,
+        repositories::{
+            repository::ResultPaging,
+            todo::TodoQueryParams,
+        },
+    },
+    state::AppState,
+};
+
+pub async fn create_todo_handler(
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<CreateTodoDTO>,
+) -> Result<Json<TodoDTO>, ApiError> {
+    let todo = state.todo_service.create(payload.into()).await?;
+    Ok(Json(todo.into()))
+}
+
+pub async fn get_todo_handler(
+    State(state): State<Arc<AppState>>,
+    Path(todo_id): Path<i32>,
+) -> Result<Json<TodoDTO>, ApiError> {
+    let todo = state.todo_service.get(todo_id).await?;
+    Ok(Json(todo.into()))
+}
+
+pub async fn list_todo_handler(
+    State(state): State<Arc<AppState>>,
+    Query(query): Query<TodoQueryParams>,
+) -> Result<Json<ResultPaging<TodoDTO>>, ApiError> {
+    let todos = state.todo_service.list(query.into()).await?;
+    Ok(Json(todos.into()))
+}
+
+pub async fn delete_todo_handler(
+    State(state): State<Arc<AppState>>,
+    Path(todo_id): Path<i32>,
+) -> Result<impl IntoResponse, ApiError> {
+    state.todo_service.delete(todo_id.into()).await?;
+    Ok(StatusCode::NO_CONTENT)
+}

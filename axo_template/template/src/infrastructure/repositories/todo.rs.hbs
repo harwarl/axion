@@ -1,0 +1,93 @@
+use async_trait::async_trait;
+use sqlx::{PgPool, QueryBuilder};
+
+use crate::{
+    domain::{
+        models::todo::{CreateTodo, Todo},
+        repositories::{
+            repository::{QueryParams, RepositoryResult, ResultPaging},
+            todo::{TodoQueryParams, TodoRepository},
+        },
+    },
+    infrastructure::error::SqlxError,
+};
+
+pub struct TodoSqlxRepository {
+    pool: PgPool,
+}
+
+impl TodoSqlxRepository {
+    pub fn new(db: PgPool) -> Self {
+        TodoSqlxRepository { pool: db }
+    }
+}
+
+#[async_trait]
+impl TodoRepository for TodoSqlxRepository {
+    async fn create(&self, new_todo: &CreateTodo) -> RepositoryResult<Todo> {
+        let pool = self.pool.clone();
+        let query = "INSERT INTO todos (title, description) VALUES ($1, $2) RETURNING *";
+        let todo = sqlx::query_as::<_, Todo>(query)
+            .bind(&new_todo.title)
+            .bind(&new_todo.description)
+            .fetch_one(&pool)
+            .await
+            .map_err(|v| SqlxError::from(v).into_inner())?;
+        Ok(todo)
+    }
+
+    async fn list(&self, params: &TodoQueryParams) -> RepositoryResult<ResultPaging<Todo>> {
+        let pool = self.pool.clone();
+        let limit = params.limit();
+        let offset = params.offset();
+
+        let mut builder = QueryBuilder::new("SELECT * FROM todos");
+        if let Some(title) = params.title.clone() {
+            builder.push(" WHERE title ILIKE ");
+            builder.push_bind(format!("%{}%", title));
+        };
+
+        builder.push(" ORDER BY id desc ");
+
+        builder.push(" LIMIT ");
+        builder.push_bind(limit);
+
+        builder.push(" OFFSET ");
+        builder.push_bind(offset);
+
+        let todos = builder
+            .build_query_as::<Todo>()
+            .fetch_all(&pool)
+            .await
+            .map_err(|e| SqlxError::from(e).into_inner())?;
+
+        Ok(ResultPaging {
+            total: todos.len() as i64,
+            items: todos,
+        })
+    }
+
+    async fn get(&self, todo_id: i32) -> RepositoryResult<Todo> {
+        let pool = self.pool.clone();
+        let query = "SELECT * FROM todos WHERE id = $1";
+        let todo = sqlx::query_as::<_, Todo>(query)
+            .bind(todo_id)
+            .fetch_one(&pool)
+            .await
+            .map_err(|e| SqlxError::from(e).into_inner())?;
+
+        Ok(todo)
+    }
+
+    async fn delete(&self, todo_id: i32) -> RepositoryResult<()> {
+        let pool = self.pool.clone();
+        let query = "DELETE FROM todos WHERE id = $1";
+        sqlx::query(query)
+            .bind(todo_id)
+            .execute(&pool)
+            .await
+            .map_err(|e| SqlxError::from(e).into_inner())?;
+
+        Ok(())
+    }
+}

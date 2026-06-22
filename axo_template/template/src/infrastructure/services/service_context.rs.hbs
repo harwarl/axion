@@ -1,0 +1,68 @@
+use async_trait::async_trait;
+use sqlx::PgPool;
+
+use crate::{
+    domain::{
+        error::CommonError,
+        models::service_context::ServiceContext,
+        services::service_context::ServiceContextService,
+    },
+    infrastructure::error::SqlxError,
+};
+
+pub struct ServiceContextServiceImpl {
+    pub pool: PgPool,
+}
+
+impl ServiceContextServiceImpl {
+    pub fn new(pool: PgPool) -> Self {
+        ServiceContextServiceImpl { pool }
+    }
+
+    async fn get_or_create(&self) -> Result<ServiceContext, CommonError> {
+        let query = "SELECT * FROM service_contexts WHERE id = $1";
+        match sqlx::query_as::<_, ServiceContext>(query)
+            .bind(1)
+            .fetch_optional(&self.pool)
+            .await
+            .map_err(|e| SqlxError::from(e).into_inner().into())?
+        {
+            Some(ctx) => Ok(ctx),
+            None => {
+                let insert =
+                    "INSERT INTO service_contexts (maintenance) VALUES ($1) RETURNING *";
+                sqlx::query_as::<_, ServiceContext>(insert)
+                    .bind(false)
+                    .fetch_one(&self.pool)
+                    .await
+                    .map_err(|e| SqlxError::from(e).into_inner().into())
+            }
+        }
+    }
+}
+
+#[async_trait]
+impl ServiceContextService for ServiceContextServiceImpl {
+    async fn get_service_context(&self) -> Result<ServiceContext, CommonError> {
+        self.get_or_create().await
+    }
+
+    async fn update(&self, service_context: ServiceContext) -> Result<ServiceContext, CommonError> {
+        let query = "
+            UPDATE service_contexts
+            SET maintenance = $1
+            WHERE id = $2
+            RETURNING *
+        ";
+        sqlx::query_as(query)
+            .bind(service_context.maintenance)
+            .bind(service_context.id)
+            .fetch_one(&self.pool)
+            .await
+            .map_err(|e| SqlxError::from(e).into_inner().into())
+    }
+
+    async fn is_maintenance_active(&self) -> Result<bool, CommonError> {
+        Ok(self.get_or_create().await?.maintenance)
+    }
+}
