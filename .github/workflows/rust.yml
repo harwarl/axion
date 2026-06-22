@@ -8,6 +8,9 @@ on:
         branches:
             - main
 
+env:
+  CARGO_HTTP_MULTIPLEXING: "false"
+
 jobs:
     test:
         name: Test and Build
