@@ -3,10 +3,9 @@ use crate::{
     prompt::{Auth, Cache, Containerize, Database, NewProject},
     scaffold::writer::Writer,
 };
+use axo_template::TemplateAssets;
 use handlebars::Handlebars;
 use serde_json::{Value, json};
-use axo_template::TemplateAssets;
-
 
 // Render the embedded assets
 pub struct TemplateRenderer;

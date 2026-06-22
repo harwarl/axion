@@ -1,4 +1,3 @@
-use super::writer::Writer;
 use crate::contants::DEPENDENCIES;
 use crate::error::Result;
 use crate::prompt::{Auth, Containerize, Database, NewProject};
@@ -24,9 +23,6 @@ impl ScaffoldStep for BaseStep {
     // Just initialize a new cargo project
     fn run(&self, new_project: &NewProject) -> Result<()> {
         Cargo::init(&new_project.name)?;
-        // for dir in NEW_PROJECT_DIR {
-        //     Writer::create_dir(&format!("{}/{}", &new_project.directory, dir))?;
-        // }
         Ok(())
     }
 }
