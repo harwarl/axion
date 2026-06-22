@@ -1,0 +1,27 @@
+use std::env;
+
+use dotenv::dotenv;
+use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+
+use crate::domain::constants::POSTGRESQL_DB_URI;
+
+pub type DBConn = Pool<Postgres>;
+
+pub async fn db_pool() -> DBConn {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL")
+        .expect(&format!("{value} must be set", value = POSTGRESQL_DB_URI).as_str());
+
+    let pool = PgPoolOptions::new()
+        .connect(&database_url)
+        .await
+        .expect("failed to create pool");
+
+    sqlx::migrate!("db/migrations")
+        .run(&pool)
+        .await
+        .expect("Migration Failed");
+
+    pool
+}

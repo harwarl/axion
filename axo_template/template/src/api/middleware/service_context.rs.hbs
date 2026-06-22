@@ -1,0 +1,67 @@
+use std::sync::Arc;
+
+use axum::{body::Body, extract::Request, http::StatusCode, response::Response};
+use futures_util::future::BoxFuture;
+use tower::{Layer, Service};
+use tracing::info;
+
+use crate::{domain::services::service_context::ServiceContextService, state::AppState};
+
+#[derive(Clone)]
+pub struct ServiceContextMaintenanceLayer {
+    pub state: Arc<AppState>,
+}
+
+impl<S> Layer<S> for ServiceContextMaintenanceLayer {
+    type Service = ServiceContextMaintenanceMiddleware<S>;
+
+    fn layer(&self, inner: S) -> Self::Service {
+        ServiceContextMaintenanceMiddleware {
+            inner,
+            service_context_service: self.state.service_context_service.clone(),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct ServiceContextMaintenanceMiddleware<S> {
+    inner: S,
+    service_context_service: Arc<dyn ServiceContextService>,
+}
+
+impl<S> Service<Request> for ServiceContextMaintenanceMiddleware<S>
+where
+    S: Service<Request, Response = Response> + Send + 'static,
+    S::Future: Send + 'static,
+{
+    type Response = S::Response;
+    type Error = S::Error;
+    type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(
+        &mut self,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Result<(), Self::Error>> {
+        self.inner.poll_ready(cx)
+    }
+
+    fn call(&mut self, req: Request) -> Self::Future {
+        let service_context_service = self.service_context_service.clone();
+        let future = self.inner.call(req);
+
+        Box::pin(async move {
+            let is_maintenance = service_context_service.is_maintenance_active().await.unwrap_or(false);
+
+            if is_maintenance {
+                info!("Service is in maintenance mode");
+                let response = Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .body(Body::empty())
+                    .unwrap();
+                return Ok(response);
+            }
+            let response = future.await?;
+            Ok(response)
+        })
+    }
+}

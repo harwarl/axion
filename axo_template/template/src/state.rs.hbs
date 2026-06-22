@@ -1,0 +1,38 @@
+use std::sync::Arc;
+
+use crate::{
+    domain::services::{service_context::ServiceContextService, todo::TodoService},
+    infrastructure::{
+        database::db::db_pool, repositories::todo::TodoSqlxRepository,
+        services::service_context::ServiceContextServiceImpl,
+    },
+    services::todo::TodoServiceImpl,
+};
+
+#[derive(Clone)]
+pub struct AppState {
+    // todo: Add the services needed per route.
+    pub todo_service: Arc<dyn TodoService>,
+    pub service_context_service: Arc<dyn ServiceContextService>,
+}
+
+impl AppState {
+    pub async fn new() -> Self {
+        // Initialize the Database
+        let pool = db_pool().await;
+
+        // Get the repositories
+        // Inject into their corresponding services
+        let todo_repository = Arc::new(TodoSqlxRepository::new(pool.clone()));
+        let todo_service = Arc::new(TodoServiceImpl::new(todo_repository));
+
+        // service maintenance service
+        let service_context_service = Arc::new(ServiceContextServiceImpl::new(pool));
+        // update the app state according
+
+        AppState {
+            service_context_service,
+            todo_service,
+        }
+    }
+}

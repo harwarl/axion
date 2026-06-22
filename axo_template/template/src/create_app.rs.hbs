@@ -1,0 +1,33 @@
+use axum::{
+    Router,
+    routing::{delete, get, post},
+};
+use std::sync::Arc;
+
+use crate::{
+    api::{
+        controller::todo::{
+            create_todo_handler, delete_todo_handler, get_todo_handler, list_todo_handler,
+        },
+        middleware::service_context::ServiceContextMaintenanceLayer,
+    },
+    state::AppState,
+};
+
+pub fn create_app(state: Arc<AppState>) -> Router {
+    // Create router with State
+    Router::new()
+        .nest(
+            "/api/todo",
+            Router::new()
+                .route("/", post(create_todo_handler).get(list_todo_handler))
+                .route(
+                    "/{todo_id}",
+                    get(get_todo_handler).delete(delete_todo_handler),
+                ),
+        )
+        .layer(ServiceContextMaintenanceLayer {
+            state: state.clone(),
+        })
+        .with_state(state)
+}

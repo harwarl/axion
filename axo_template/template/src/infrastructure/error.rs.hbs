@@ -1,0 +1,24 @@
+use crate::domain::error::RepositoryError;
+
+#[derive(Debug)]
+pub struct SqlxError(RepositoryError);
+
+impl SqlxError {
+    pub fn into_inner(self) -> RepositoryError {
+        self.0
+    }
+}
+
+impl From<sqlx::Error> for SqlxError {
+    fn from(value: sqlx::Error) -> Self {
+        let (code, message) = match &value {
+            sqlx::Error::RowNotFound => (1, "Resource not found".to_string()), // 404 
+            _ => (2, value.to_string())
+        };
+
+        SqlxError(RepositoryError {
+            message,
+            code
+        })
+    }
+}
