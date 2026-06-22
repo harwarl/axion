@@ -18,7 +18,7 @@ pub trait ScaffoldStep {
 pub struct BaseStep;
 impl ScaffoldStep for BaseStep {
     fn label(&self) -> &str {
-        "Creating Cargo Project ..."
+        "Creating Cargo Project"
     }
 
     fn run(&self, new_project: &NewProject) -> Result<()> {
