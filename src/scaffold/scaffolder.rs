@@ -1,8 +1,6 @@
 use std::time::Duration;
 
-use super::steps::{
-    AuthStep, BaseStep, CacheStep, DependenciesStep, DockerStep, MainStep, ScaffoldStep,
-};
+use super::steps::{BaseStep, DependenciesStep, DockerStep, ScaffoldStep, TemplateStep};
 use crate::error::Result;
 use crate::prompt::NewProject;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -17,9 +15,7 @@ impl<'a> Scaffolder<'a> {
         let steps: Vec<Box<dyn ScaffoldStep>> = vec![
             Box::new(BaseStep),
             Box::new(DependenciesStep),
-            Box::new(MainStep),
-            Box::new(AuthStep),
-            Box::new(CacheStep),
+            Box::new(TemplateStep),
             Box::new(DockerStep), //TODO: Add More Steps in Here
         ];
 

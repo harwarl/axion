@@ -1,5 +1,3 @@
-use colored::Colorize;
-
 use crate::error::Result;
 
 pub fn add(_name: &String, _kind: &String) -> Result<()> {
