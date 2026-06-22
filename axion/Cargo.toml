@@ -8,7 +8,7 @@ description = ""
 readme = "../README.md"
 homepage = "https://github.com/harwarl/axion"
 license = "MIT"
-keywords = ["envrironment", "env", "config", "settings", "dotenv"]
+keywords = ["envrironment", "env", "config", "settings", "boilerplate", "project-starter"]
 repository = "https://github.com/harwarl/axion"
 
 [lib]
